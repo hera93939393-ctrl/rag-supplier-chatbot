@@ -4,6 +4,7 @@ import { readFile } from "node:fs/promises";
 import { hybridSearch, buildBm25Index } from "./search.mjs";
 import { buildPrompt, formatKstNow } from "./buildPrompt.mjs";
 import { checkOllamaStatus, streamChat } from "./ollamaClient.mjs";
+import { runJudge } from "./judge.mjs";
 
 const MODEL_ID = "onnx-community/embeddinggemma-300m-ONNX";
 const DTYPE = "q4";
@@ -52,6 +53,11 @@ async function main() {
   }
   const elapsedMs = Date.now() - start;
   console.log(`\n--- 답변 스트리밍 종료 (${elapsedMs}ms, ${answer.length}자) ---`);
+
+  console.log("\n--- 판정(judge) 요청 ---");
+  const judgeStart = Date.now();
+  const verdict = await runJudge({ question, chunks: topChunks, answer });
+  console.log(`판정 결과 (${Date.now() - judgeStart}ms):`, verdict);
 }
 
 main().catch((err) => {

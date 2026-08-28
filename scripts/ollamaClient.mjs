@@ -16,6 +16,25 @@ export async function checkOllamaStatus() {
   }
 }
 
+export async function chatOnce(prompt, { format, temperature = 0, signal } = {}) {
+  const res = await fetch(`${OLLAMA_BASE}/api/chat`, {
+    method: "POST",
+    signal,
+    body: JSON.stringify({
+      model: MODEL,
+      stream: false,
+      think: false,
+      ...(format ? { format } : {}),
+      options: { temperature },
+      messages: [{ role: "user", content: prompt }],
+    }),
+  });
+
+  if (!res.ok) throw new Error(`Ollama 요청 실패: ${res.status}`);
+  const data = await res.json();
+  return data.message?.content ?? "";
+}
+
 export async function* streamChat(prompt, { signal } = {}) {
   const res = await fetch(`${OLLAMA_BASE}/api/chat`, {
     method: "POST",
