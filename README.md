@@ -3,17 +3,51 @@
 공공급식통합플랫폼(NeaT)에 게시된 "[매뉴얼] 공급업체 서류심사 세부기준 안내"(게시글 80068)를 근거로,
 질문에 근거 청크를 인용해 답하고 판정(judge)까지 붙는 RAG 챗봇 프로젝트. PRD는 [PRD.md](./PRD.md) 참고.
 
-## 파이프라인 구성 (2~7강)
+## 배포 주소
 
-| 단계 | 파일 |
-|---|---|
-| 자료/청크 | [data/chunks.json](./data/chunks.json) (33개, SUP-001~048) |
-| 임베딩/벡터스토어 | [scripts/embed-docs-browser-path.mjs](./scripts/embed-docs-browser-path.mjs) → [public/data/supplier-docs.json](./public/data/supplier-docs.json) |
-| 하이브리드 검색 | [scripts/search.mjs](./scripts/search.mjs) (cosine top-10 + BM25 top-5) |
-| 프롬프트 조립 | [scripts/buildPrompt.mjs](./scripts/buildPrompt.mjs) |
-| 로컬 LLM 스트리밍 | [scripts/ollamaClient.mjs](./scripts/ollamaClient.mjs) (qwen3.5:2b) |
-| LLM-as-a-Judge | [scripts/judge.mjs](./scripts/judge.mjs) |
-| end-to-end CLI | [scripts/rag_cli.mjs](./scripts/rag_cli.mjs) |
+**https://hera93939393-ctrl.github.io/rag-supplier-chatbot/**
+
+### 사용 조건 (반드시 확인)
+
+이 페이지는 정적 파일만 배포된 것이며, 답변은 서버가 아니라 **방문자 본인 컴퓨터의 로컬 Ollama**가 생성합니다.
+아래 조건이 갖춰지지 않으면 화면은 열려도 답변은 나오지 않습니다.
+
+1. **Ollama가 이 컴퓨터에서 실행 중**이어야 하고, `qwen3.5:2b` 모델이 받아져 있어야 합니다 (`ollama pull qwen3.5:2b`).
+2. Ollama가 이 배포 주소의 요청을 허용하도록 **`OLLAMA_ORIGINS`에 `https://hera93939393-ctrl.github.io`를 추가**한 뒤
+   Ollama를 재시작해야 합니다 (Windows: `setx OLLAMA_ORIGINS "https://hera93939393-ctrl.github.io"`).
+3. **Chrome/Edge 130 이상**에서는 HTTPS 페이지가 `localhost`를 호출할 때 브라우저가 별도로
+   **"로컬 네트워크 액세스" 권한**을 요구합니다(Private Network Access). 접속 시 뜨는 권한 프롬프트를 허용하거나,
+   주소창의 사이트 정보(자물쇠) 아이콘에서 직접 허용으로 바꿔야 합니다. 이 조건은 강의 6강 본문에는 없지만
+   실제 배포·테스트 과정에서 발견해 추가한 조건입니다.
+4. **첫 방문 시 임베딩 모델(약 200MB)을 내려받습니다.** 상태 배지에 진행률이 표시됩니다.
+5. Safari는 Ollama 연결과 임베딩 WASM 실행이 불안정할 수 있어 Chrome/Edge를 권장합니다.
+
+## 파이프라인 구성
+
+| 단계 | Node/CLI (2~8강 검증용) | 브라우저 앱 (9강 배포) |
+|---|---|---|
+| 자료/청크 | [data/chunks.json](./data/chunks.json) (33개, SUP-001~048) | 동일 |
+| 임베딩/벡터스토어 | [scripts/embed-docs-browser-path.mjs](./scripts/embed-docs-browser-path.mjs) → [public/data/supplier-docs.json](./public/data/supplier-docs.json) | [src/lib/embeddings.ts](./src/lib/embeddings.ts) (질의 임베딩, `model_no_gather_q4` WASM 우회) |
+| 하이브리드 검색 | [scripts/search.mjs](./scripts/search.mjs) | [src/lib/search.ts](./src/lib/search.ts) |
+| 프롬프트 조립 | [scripts/buildPrompt.mjs](./scripts/buildPrompt.mjs) | [src/lib/buildPrompt.ts](./src/lib/buildPrompt.ts) |
+| 로컬 LLM 스트리밍 | [scripts/ollamaClient.mjs](./scripts/ollamaClient.mjs) | [src/lib/ollamaClient.ts](./src/lib/ollamaClient.ts) |
+| LLM-as-a-Judge | [scripts/judge.mjs](./scripts/judge.mjs) | [src/lib/judge.ts](./src/lib/judge.ts) |
+| UI | — | [src/App.tsx](./src/App.tsx) |
+| end-to-end 실험 | [scripts/rag_cli.mjs](./scripts/rag_cli.mjs), [scripts/experiment.mjs](./scripts/experiment.mjs) | — |
+
+브라우저 앱은 CLI에서 검증한 것과 동일한 검색·프롬프트·판정 로직을 TypeScript로 그대로 옮긴 것이며,
+실제 배포 주소에서 정상 질문/약한근거 질문 모두 검색→스트리밍→판정까지 end-to-end로 확인했다
+(아래 "9강 배포 검증" 절 참고).
+
+## 로컬 개발
+
+```
+npm install
+npm run embed-docs   # data/chunks.json -> public/data/supplier-docs.json
+npm run dev          # http://localhost:5173
+npm run build        # dist/ 생성
+npm run deploy        # gh-pages -d dist (GitHub Pages 배포)
+```
 
 ## 8강 실험 기록 — 루브릭으로 프롬프트 실험 한 바퀴
 
@@ -74,3 +108,18 @@ Q1,Q2,Q3,Q5,Q6은 `weakEvidence=false`라 애초에 바뀐 문구를 프롬프�
    안정되지 않는 남은 경계 사례. 별도 후속 실험 대상으로 남김.
 
 원본 실행 로그: [experiments/baseline.json](./experiments/baseline.json), [experiments/strict-wording.json](./experiments/strict-wording.json)
+
+## 9강 배포 검증
+
+CLI(scripts/rag_cli.mjs)에서 검증한 것과 같은 로직을 브라우저(src/lib/*)로 옮긴 뒤, 실제 배포 주소에서
+로컬 Ollama와 연결해 직접 확인한 결과.
+
+| 확인 항목 | 결과 |
+|---|---|
+| 자산 로드 (base:'./', GitHub Pages 하위 경로) | dist/index.html이 `./assets/...` 상대경로로 정상 로드됨 |
+| 브라우저 임베딩 (WASM) | 기본 `pipeline()`은 강의 4강이 경고한 `GatherBlockQuantized` 오류로 실패 → `model_file_name:"model_no_gather_q4"` + `dtype:"fp32"`로 우회, 768차원 확인 |
+| 정상 질문 ("사업자등록증 확인할 때 필요한 항목이 뭐야?") | 검색 top: bm25 SUP-003(1.00), vector SUP-035(0.81)/SUP-029(0.79) — 답변이 SUP-029 인용, judge: grounded:true noHalluc:true score:60 |
+| 약한근거 질문 ("내일 날씨 어때?") | topScore 0.48 → weakEvidence 배지 표시, 답변 "매뉴얼에서 확인되지 않습니다."(8강에서 채택한 strict 문구 그대로), judge: refusal:true grounded:false score:20 |
+| CORS / OLLAMA_ORIGINS | 배포 직후 `OLLAMA_ORIGINS` 미설정 상태에서는 연결 실패 확인 → 설정 후 재시작하니 `Access-Control-Allow-Origin` 헤더로 정상 허용 확인(`curl -H "Origin: https://hera93939393-ctrl.github.io"`) |
+| Chrome Local Network Access | CORS를 고쳐도 여전히 `ERR_BLOCKED_BY_CLIENT`로 막힘 → 조사 결과 Chrome/Edge 130+의 Private Network Access 정책(HTTPS 사이트의 localhost 요청은 별도 권한 필요)임을 확인. 강의 6강 본문에는 없던 조건이라 위 "사용 조건"에 추가 |
+| 오류 시 상태 유지 | 스트리밍/판정 오류가 나도 이미 받은 답변·출처 칩이 지워지지 않는 것을 코드로 확인(catch에서 answer/sources를 초기화하지 않음) |
