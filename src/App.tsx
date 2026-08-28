@@ -138,7 +138,7 @@ export default function App() {
               ? ollamaStatus.hasModel
                 ? `Ollama 연결됨 (${MODEL} 준비됨)`
                 : `Ollama는 연결됐지만 ${MODEL} 모델이 없습니다. "ollama pull ${MODEL}"을 실행하세요.`
-              : "Ollama에 연결할 수 없습니다. 이 컴퓨터에서 Ollama를 실행하고 있는지 확인하세요."}
+              : "Ollama에 연결할 수 없습니다. ① 이 컴퓨터에서 Ollama가 실행 중인지, ② OLLAMA_ORIGINS에 이 사이트 주소가 허용되어 있는지 확인하세요. ③ Chrome/Edge 130 이상에서는 주소창의 사이트 정보(자물쇠) 아이콘 → \"로컬 네트워크 액세스\"를 허용으로 바꿔야 할 수 있습니다."}
         </div>
         {!ollamaStatus.online && (
           <button onClick={refreshOllamaStatus} disabled={checkingOllama}>
