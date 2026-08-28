@@ -1,0 +1,12 @@
+{
+  "name": "rag-supplier-chatbot",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "embed-docs": "node scripts/embed-docs-browser-path.mjs"
+  },
+  "dependencies": {
+    "@huggingface/transformers": "^4.2.0"
+  }
+}
