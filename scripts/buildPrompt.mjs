@@ -25,7 +25,9 @@ export function formatKstNow(date = new Date()) {
   return `${kst} KST`;
 }
 
-export function buildPrompt({ question, chunks, weakEvidence, kstNow, weakEvidenceNotice = WEAK_EVIDENCE_NOTICE_BASELINE }) {
+// 8강 실험 결과 채택: strict 문구가 무근거 질문 거부율(2/3->3/3)과 약한근거 답변의
+// 문구 일관성을 실제로 개선했으므로 기본값으로 삼는다. (README.md 실험 기록 참고)
+export function buildPrompt({ question, chunks, weakEvidence, kstNow, weakEvidenceNotice = WEAK_EVIDENCE_NOTICE_STRICT }) {
   const lines = [];
   lines.push(
     "다음 자료는 공공급식통합플랫폼(NeaT)에 게시된 '공급업체 서류심사 세부기준' 공개 매뉴얼에서 뽑은 조각입니다."

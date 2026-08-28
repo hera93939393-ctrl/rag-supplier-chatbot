@@ -35,7 +35,9 @@ export async function chatOnce(prompt, { format, temperature = 0, signal } = {})
   return data.message?.content ?? "";
 }
 
-export async function* streamChat(prompt, { signal } = {}) {
+export async function* streamChat(prompt, { signal, temperature = 0 } = {}) {
+  // 8강 실험에서 온도를 고정하지 않아 같은 질문·같은 프롬프트에도 판정 필드가 흔들리는
+  // 것을 확인했다. 실험 간 비교가 재현 가능하도록 기본값을 0으로 고정한다.
   const res = await fetch(`${OLLAMA_BASE}/api/chat`, {
     method: "POST",
     signal,
@@ -43,6 +45,7 @@ export async function* streamChat(prompt, { signal } = {}) {
       model: MODEL,
       stream: true,
       think: false,
+      options: { temperature },
       messages: [{ role: "user", content: prompt }],
     }),
   });
