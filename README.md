@@ -17,8 +17,10 @@ PRD는 [PRD.md](./PRD.md) 참고.
 2. Ollama가 이 배포 주소의 요청을 허용하도록 **`OLLAMA_ORIGINS`에 `https://hera93939393-ctrl.github.io`를 추가**한 뒤
    Ollama를 재시작해야 합니다 (Windows: `setx OLLAMA_ORIGINS "https://hera93939393-ctrl.github.io"`).
 3. **Chrome/Edge 130 이상**에서는 HTTPS 페이지가 `localhost`를 호출할 때 브라우저가 별도로
-   **"로컬 네트워크 액세스" 권한**을 요구합니다(Private Network Access). 접속 시 뜨는 권한 프롬프트를 허용하거나,
-   주소창의 사이트 정보(자물쇠) 아이콘에서 직접 허용으로 바꿔야 합니다. 이 조건은 강의 6강 본문에는 없지만
+   **"로컬 네트워크 액세스" 권한**을 요구합니다(Local Network Access, 이전 명칭 Private Network Access).
+   실제로 이 권한이 없으면 `TypeError: Failed to fetch`로 실패하는 것을 확인했습니다. 해결 방법:
+   ① 배포 주소를 Chrome에서 열고 ② 주소창 왼쪽 **자물쇠(사이트 정보) 아이콘** 클릭 ③ **"로컬 네트워크 액세스"**를
+   "차단"/"확인"에서 **"허용"**으로 변경 ④ 페이지 새로고침. 이 조건은 강의 6강 본문에는 없지만
    실제 배포·테스트 과정에서 발견해 추가한 조건입니다.
 4. **첫 방문 시 임베딩 모델(약 200MB)을 내려받습니다.** 상태 배지에 진행률이 표시됩니다.
 5. Safari는 Ollama 연결과 임베딩 WASM 실행이 불안정할 수 있어 Chrome/Edge를 권장합니다.

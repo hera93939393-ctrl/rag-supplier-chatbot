@@ -150,7 +150,7 @@ export default function App() {
               ? ollamaStatus.hasModel
                 ? `Ollama 연결됨 (${MODEL} 준비됨)`
                 : `Ollama는 연결됐지만 ${MODEL} 모델이 없습니다. "ollama pull ${MODEL}"을 실행하세요.`
-              : "Ollama에 연결할 수 없습니다. ① 이 컴퓨터에서 Ollama가 실행 중인지, ② OLLAMA_ORIGINS에 이 사이트 주소가 허용되어 있는지 확인하세요. ③ Chrome/Edge 130 이상에서는 주소창의 사이트 정보(자물쇠) 아이콘 → \"로컬 네트워크 액세스\"를 허용으로 바꿔야 할 수 있습니다."}
+              : "Ollama에 연결할 수 없습니다. 가장 흔한 원인은 Chrome/Edge의 \"로컬 네트워크 액세스\" 권한입니다 — 주소창 왼쪽 자물쇠(사이트 정보) 아이콘 클릭 → \"로컬 네트워크 액세스\"를 허용으로 바꾼 뒤 새로고침하세요. 그래도 안 되면 ① 이 컴퓨터에서 Ollama가 실행 중인지, ② OLLAMA_ORIGINS에 이 사이트 주소가 허용되어 있는지 확인하세요."}
         </div>
         {!ollamaStatus.online && (
           <button onClick={refreshOllamaStatus} disabled={checkingOllama}>
@@ -171,7 +171,7 @@ export default function App() {
           <div className="examples">
             <p>이런 질문을 해볼 수 있어요:</p>
             {EXAMPLE_QUESTIONS.map((q) => (
-              <button key={q} className="example-btn" onClick={() => handleAsk(q)} disabled={busy}>
+              <button key={q} className="example-btn" onClick={() => handleAsk(q)} disabled={busy || !store || !ollamaStatus.online}>
                 {q}
               </button>
             ))}
