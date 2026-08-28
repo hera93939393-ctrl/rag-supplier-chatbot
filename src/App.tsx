@@ -10,6 +10,8 @@ import type { Chunk, JudgeVerdict, SearchResult, VectorStore } from "./lib/types
 
 type Stage = "idle" | "embedding" | "searching" | "generating" | "judging" | "done" | "error";
 
+type HumanFeedback = "up" | "down" | null;
+
 interface Turn {
   question: string;
   answer: string;
@@ -19,6 +21,7 @@ interface Turn {
   verdict: JudgeVerdict | null;
   error: string | null;
   stage: Stage;
+  humanFeedback: HumanFeedback;
 }
 
 const EXAMPLE_QUESTIONS = [
@@ -69,7 +72,7 @@ export default function App() {
     setInput("");
     setTurns((prev) => [
       ...prev,
-      { question, answer: "", sources: [], weakEvidence: false, topScore: 0, verdict: null, error: null, stage: "embedding" },
+      { question, answer: "", sources: [], weakEvidence: false, topScore: 0, verdict: null, error: null, stage: "embedding", humanFeedback: null },
     ]);
 
     const controller = new AbortController();
@@ -116,6 +119,15 @@ export default function App() {
 
   function handleStop() {
     abortRef.current?.abort();
+  }
+
+  function setHumanFeedback(index: number, feedback: HumanFeedback) {
+    setTurns((prev) => {
+      const next = [...prev];
+      // 다시 누르면 취소(토글), 자동 판정(judge) 결과는 건드리지 않고 사람 피드백만 별도로 남긴다.
+      next[index] = { ...next[index], humanFeedback: next[index].humanFeedback === feedback ? null : feedback };
+      return next;
+    });
   }
 
   const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
@@ -212,6 +224,26 @@ export default function App() {
                     <div className="judge-comment">{t.verdict.comment}</div>
                   </>
                 )}
+              </div>
+            )}
+
+            {t.stage === "done" && (
+              <div className="feedback-row">
+                <span className="feedback-label">이 답변, 도움이 됐나요? (자동 판정과 별개로 기록됩니다)</span>
+                <button
+                  className={`feedback-btn ${t.humanFeedback === "up" ? "feedback-active" : ""}`}
+                  onClick={() => setHumanFeedback(i, "up")}
+                  aria-pressed={t.humanFeedback === "up"}
+                >
+                  👍 좋아요
+                </button>
+                <button
+                  className={`feedback-btn ${t.humanFeedback === "down" ? "feedback-active" : ""}`}
+                  onClick={() => setHumanFeedback(i, "down")}
+                  aria-pressed={t.humanFeedback === "down"}
+                >
+                  👎 별로예요
+                </button>
               </div>
             )}
           </div>

@@ -126,6 +126,35 @@
   color: #555;
 }
 
+.feedback-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+
+.feedback-label {
+  font-size: 0.75rem;
+  color: #888;
+}
+
+.feedback-btn {
+  font-size: 0.8rem;
+  padding: 4px 10px;
+  border: 1px solid #ccc;
+  border-radius: 14px;
+  background: white;
+  cursor: pointer;
+}
+
+.feedback-btn.feedback-active {
+  background: #eef2ff;
+  border-color: #3949ab;
+  color: #3949ab;
+  font-weight: 600;
+}
+
 .input-row {
   position: fixed;
   bottom: 0;
