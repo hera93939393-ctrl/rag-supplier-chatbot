@@ -1,0 +1,161 @@
+* {
+  box-sizing: border-box;
+}
+
+.app {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 24px 16px 96px;
+  font-family: -apple-system, "Segoe UI", "Malgun Gothic", sans-serif;
+  color: #1a1a1a;
+}
+
+.header h1 {
+  font-size: 1.4rem;
+  margin: 0 0 8px;
+}
+
+.subtitle {
+  font-size: 0.85rem;
+  color: #555;
+  line-height: 1.5;
+  margin: 0 0 16px;
+}
+
+.status-banner {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 20px;
+  align-items: center;
+}
+
+.badge {
+  display: inline-block;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+
+.badge-ok { background: #e6f4ea; color: #1e7e34; }
+.badge-error { background: #fdecea; color: #c0392b; }
+.badge-warn { background: #fff8e1; color: #8a6d00; }
+.badge-info { background: #eef2ff; color: #3949ab; }
+
+.status-banner button {
+  font-size: 0.8rem;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.examples {
+  border: 1px dashed #ccc;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.example-btn {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 8px 10px;
+  margin-top: 6px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background: #fafafa;
+  cursor: pointer;
+}
+
+.turn {
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #eee;
+}
+
+.question {
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.stage-indicator {
+  font-size: 0.85rem;
+  color: #888;
+  margin-bottom: 8px;
+}
+
+.answer {
+  white-space: pre-wrap;
+  line-height: 1.6;
+  margin-bottom: 10px;
+}
+
+.sources {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.chip {
+  font-size: 0.75rem;
+  padding: 4px 8px;
+  border-radius: 12px;
+  text-decoration: none;
+  border: 1px solid #ccc;
+}
+
+.chip-vector { background: #eef2ff; color: #3949ab; }
+.chip-bm25 { background: #fef6e0; color: #8a6d00; }
+
+.judge-badge {
+  font-size: 0.8rem;
+  padding: 8px 10px;
+  border-radius: 6px;
+  background: #f5f5f5;
+}
+
+.judge-pass { background: #e6f4ea; }
+.judge-fail { background: #fdecea; }
+.judge-refusal { background: #eef2ff; }
+.judge-error { background: #fdecea; color: #c0392b; }
+
+.judge-comment {
+  margin-top: 4px;
+  color: #555;
+}
+
+.input-row {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  gap: 8px;
+  padding: 12px 16px;
+  background: white;
+  border-top: 1px solid #ddd;
+}
+
+.input-row input {
+  flex: 1;
+  padding: 10px 12px;
+  font-size: 0.95rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.input-row button {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  background: #3949ab;
+  color: white;
+  cursor: pointer;
+}
+
+.input-row button:disabled {
+  background: #aaa;
+  cursor: not-allowed;
+}
